@@ -42,5 +42,16 @@ services:
       - postgres
       - redis
 
+  notification-service:
+    build:
+      context: ./services/notification-service
+    container_name: cloudcart-notification-service
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./services/notification-service/.env
+    depends_on:
+      - redis
+
 volumes:
   postgres_data:
