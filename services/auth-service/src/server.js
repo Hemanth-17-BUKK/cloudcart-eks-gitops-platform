@@ -1,10 +1,15 @@
-const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config(); // <-- load env first
+require("./config/db");
+
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
+const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 
-dotenv.config();
+const authRoutes = require("./routes/authRoutes"); // now env variables exist
 
 const app = express();
 
@@ -15,25 +20,7 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan("combined"));
 
-app.get("/", (req, res) => {
-  res.json({
-    service: "auth-service",
-    status: "running",
-    version: "1.0.0"
-  });
-});
-
-app.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "healthy"
-  });
-});
-
-app.get("/ready", (req, res) => {
-  res.status(200).json({
-    status: "ready"
-  });
-});
+app.use("/", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`auth-service running on port ${PORT}`);
