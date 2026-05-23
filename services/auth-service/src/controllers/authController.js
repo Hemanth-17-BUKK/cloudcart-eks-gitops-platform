@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
+const redisClient = require("../config/redis");
 
 const registerUser = async (req, res) => {
   try {
@@ -90,7 +91,10 @@ const loginUser = async (req, res) => {
         expiresIn: "1h"
       }
     );
-
+    await redisClient.set(
+      `session:${user.username}`,
+       token
+    );
     res.status(200).json({
       message: "Login successful",
       token

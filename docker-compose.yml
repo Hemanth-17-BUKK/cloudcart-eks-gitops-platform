@@ -12,6 +12,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  redis:
+    image: redis:8
+    container_name: cloudcart-redis
+    ports:
+      - "6379:6379"
+
   auth-service:
     build:
       context: ./services/auth-service
@@ -22,6 +28,7 @@ services:
       - ./services/auth-service/.env
     depends_on:
       - postgres
+      - redis
 
   user-service:
     build:
@@ -33,6 +40,7 @@ services:
       - ./services/user-service/.env
     depends_on:
       - postgres
+      - redis
 
 volumes:
   postgres_data:
