@@ -1,0 +1,27 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: cloudcart-postgres
+    environment:
+      POSTGRES_USER: cloudcart
+      POSTGRES_PASSWORD: cloudcart123
+      POSTGRES_DB: cloudcart_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  auth-service:
+    build:
+      context: ./services/auth-service
+    container_name: cloudcart-auth-service
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./services/auth-service/.env
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
