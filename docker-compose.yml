@@ -54,6 +54,8 @@ services:
       - ./services/notification-service/.env
     depends_on:
       - redis
+    volumes:
+      - ~/.aws:/root/.aws:ro
 
 volumes:
   postgres_data:

@@ -6,6 +6,10 @@ const morgan = require("morgan");
 
 dotenv.config();
 require("./config/redis");
+require("./config/sqs");
+
+const startPolling =
+  require("./workers/sqsWorker");
 
 const app = express();
 
@@ -32,4 +36,5 @@ app.get("/health", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`notification-service running on port ${PORT}`);
+  startPolling();
 });
