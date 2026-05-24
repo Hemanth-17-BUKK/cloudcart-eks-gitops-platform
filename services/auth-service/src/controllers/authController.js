@@ -2,6 +2,11 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
 const redisClient = require("../config/redis");
+const sqsClient = require("../config/sqs");
+
+const {
+  SendMessageCommand
+} = require("@aws-sdk/client-sqs");
 
 const registerUser = async (req, res) => {
   try {
@@ -31,11 +36,26 @@ const registerUser = async (req, res) => {
       [username, hashedPassword]
     );
     await redisClient.publish(
-     "user_registered",
+      "user_registered",
       JSON.stringify({
+        username: username,
+        event: "USER_REGISTERED"
+      })
+    );
+    const sqsMessage = {
       username: username,
       event: "USER_REGISTERED"
+    };
+
+    await sqsClient.send(
+      new SendMessageCommand({
+        QueueUrl: process.env.SQS_QUEUE_URL,
+        MessageBody: JSON.stringify(sqsMessage)
       })
+    );
+
+    console.log(
+      "Registration event sent to SQS"
     );
 
     res.status(201).json({
@@ -45,7 +65,8 @@ const registerUser = async (req, res) => {
       }
     });
 
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error);
 
     res.status(500).json({
@@ -100,7 +121,7 @@ const loginUser = async (req, res) => {
     );
     await redisClient.set(
       `session:${user.username}`,
-       token
+      token
     );
     res.status(200).json({
       message: "Login successful",
