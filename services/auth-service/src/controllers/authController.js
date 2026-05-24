@@ -30,6 +30,13 @@ const registerUser = async (req, res) => {
       "INSERT INTO users (username, password) VALUES ($1, $2)",
       [username, hashedPassword]
     );
+    await redisClient.publish(
+     "user_registered",
+      JSON.stringify({
+      username: username,
+      event: "USER_REGISTERED"
+      })
+    );
 
     res.status(201).json({
       message: "User registered successfully",

@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 
 dotenv.config();
+require("./config/redis");
 
 const app = express();
 
