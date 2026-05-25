@@ -1,0 +1,67 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: auth-service
+
+  namespace: cloudcart
+
+  labels:
+    app: auth-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: auth-service
+
+  template:
+    metadata:
+      labels:
+        app: auth-service
+
+    spec:
+      containers:
+        - name: auth-service
+
+          image: cloudcart-eks-gitops-platform-auth-service:latest
+
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 3000
+
+          env:
+            - name: PORT
+              value: "3000"
+
+            - name: DB_USER
+              value: "cloudcart"
+
+            - name: DB_NAME
+              value: "cloudcart_auth"
+
+          envFrom:
+            - configMapRef:
+                name: cloudcart-config
+
+            - secretRef:
+                name: cloudcart-secret
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3000
+
+            initialDelaySeconds: 5
+            periodSeconds: 5

@@ -32,6 +32,14 @@ app.get("/health", (req, res) => {
   });
 });
 
+app.get("/ready", (req, res) => {
+  res.status(200).json({
+    service: "auth-service",
+    status: "ready",
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`auth-service running on port ${PORT}`);
 });

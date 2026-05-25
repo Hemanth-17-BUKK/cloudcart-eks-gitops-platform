@@ -16,12 +16,6 @@ router.get("/", (req, res) => {
 });
 
 
-router.get("/ready", (req, res) => {
-  res.status(200).json({
-    status: "ready"
-  });
-});
-
 router.post("/auth/register", registerUser);
 
 router.post("/auth/login", loginUser);
