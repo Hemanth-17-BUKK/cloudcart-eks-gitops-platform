@@ -15,11 +15,6 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/health", (req, res) => {
-  res.status(200).json({
-    status: "healthy"
-  });
-});
 
 router.get("/ready", (req, res) => {
   res.status(200).json({

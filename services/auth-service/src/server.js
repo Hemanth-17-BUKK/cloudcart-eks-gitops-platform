@@ -24,6 +24,14 @@ app.use(morgan("combined"));
 
 app.use("/", authRoutes);
 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    service: "auth-service",
+    status: "healthy",
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`auth-service running on port ${PORT}`);
 });
