@@ -35,6 +35,13 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString()
   });
 });
+app.get("/ready", (req, res) => {
+  res.status(200).json({
+    service: "notification-service",
+    status: "ready",
+    timestamp: new Date().toISOString()
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`notification-service running on port ${PORT}`);

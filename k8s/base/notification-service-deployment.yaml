@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: notification-service
+
+  namespace: cloudcart
+
+  labels:
+    app: notification-service
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: notification-service
+
+  template:
+    metadata:
+      labels:
+        app: notification-service
+
+    spec:
+      containers:
+        - name: notification-service
+
+          image: cloudcart-eks-gitops-platform-notification-service:latest
+
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 3002
+
+          env:
+            - name: PORT
+              value: "3002"
+
+          envFrom:
+            - configMapRef:
+                name: cloudcart-config
+
+            - secretRef:
+                name: cloudcart-secret
+          volumeMounts:
+            - name: aws-credentials
+              mountPath: /root/.aws
+              readOnly: true
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3002
+
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+              - name: aws-credentials
+
+                secret:
+                  secretName: aws-credentials
